@@ -21,7 +21,7 @@ namespace Mistaken.RAMod
 
         public static readonly Dictionary<Player, int> SelectedMenus = new Dictionary<Player, int>();
 
-        public static readonly Dictionary<Player, int> LastSelectedPlayer = new Dictionary<Player, int>();
+        public static readonly Dictionary<Player, (int Id, int Type)> LastSelectedPlayer = new Dictionary<Player, (int Id, int Type)>();
 
         static MenuManager()
         {

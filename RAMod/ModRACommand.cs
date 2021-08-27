@@ -6,6 +6,7 @@
 
 using CommandSystem;
 using Mistaken.API.Commands;
+using Mistaken.API.Extensions;
 
 namespace Mistaken.RAMod
 {
@@ -26,10 +27,10 @@ namespace Mistaken.RAMod
                 return new string[] { GetUsage() };
             if (!bool.TryParse(args[0], out bool value))
                 return new string[] { GetUsage() };
-            /*if (!value) //false -> Default RA | true -> Modified RA
-                OldLOFH.LOFHPatch.DisabledFor.Add(sender.GetPlayer().UserId);
+            if (!value) // false -> Default RA | true -> Modified RA
+                LOFHPatch.DisabledFor.Add(sender.GetPlayer().UserId);
             else
-                OldLOFH.LOFHPatch.DisabledFor.Remove(sender.GetPlayer().UserId);*/
+                LOFHPatch.DisabledFor.Remove(sender.GetPlayer().UserId);
             _s = true;
             return new string[] { "Done" };
         }
