@@ -11,6 +11,7 @@ using System.Text;
 using Exiled.API.Enums;
 using Exiled.API.Extensions;
 using Exiled.API.Features;
+using Exiled.API.Features.Items;
 using Mistaken.API.Extensions;
 
 namespace Mistaken.RAMod
@@ -30,7 +31,6 @@ namespace Mistaken.RAMod
                 if (CommandsExtender.Commands.FakeNickCommand.FullNicknames.ContainsKey(player.UserId) && Systems.Patches.NicknamePatch.RealNicknames.TryGetValue(player.UserId, out string fname))
                     builder.Append("\nFake Nickname: " + fname);
             });*/
-
         }
 
         public static readonly Dictionary<string, Func<Player, bool, bool>> IfParsers = new Dictionary<string, Func<Player, bool, bool>>
@@ -194,7 +194,7 @@ namespace Mistaken.RAMod
 
                     foreach (var item in player.ReferenceHub.playerEffectsController.AllEffects)
                     {
-                        if (item.Value.Enabled)
+                        if (item.Value.IsEnabled)
                             tor += $"\n- {item.Key.Name} ({item.Value.Intensity})" + (item.Value.Duration > 0 ? $" {item.Value.Duration}s left" : string.Empty);
                     }
 
@@ -208,7 +208,7 @@ namespace Mistaken.RAMod
                     string tor = string.Empty;
 
                     bool reverse = false;
-                    var effects = player.ReferenceHub.playerEffectsController.AllEffects.Where(x => x.Value.Enabled).ToArray();
+                    var effects = player.ReferenceHub.playerEffectsController.AllEffects.Where(x => x.Value.IsEnabled).ToArray();
                     int size = effects.Length > 8 ? 50 : 75;
                     for (int i = 0; i < effects.Length; i++)
                     {
@@ -238,7 +238,7 @@ namespace Mistaken.RAMod
                     string tor = string.Empty;
 
                     int state = 0;
-                    var effects = player.ReferenceHub.playerEffectsController.AllEffects.Where(x => x.Value.Enabled).ToArray();
+                    var effects = player.ReferenceHub.playerEffectsController.AllEffects.Where(x => x.Value.IsEnabled).ToArray();
                     int size = 75;
                     for (int i = 0; i < effects.Length; i++)
                     {
@@ -288,7 +288,7 @@ namespace Mistaken.RAMod
                 "currentItem",
                 (player, gameplayData) =>
                 {
-                    if (player.CurrentItemIndex != -1)
+                    if (player.CurrentItem != null)
                         return ItemToString(player.CurrentItem, false, false);
                     else
                         return "None";
@@ -339,7 +339,7 @@ namespace Mistaken.RAMod
                 "coloredCurrentItem",
                 (player, gameplayData) =>
                 {
-                    if (player.CurrentItemIndex != -1)
+                    if (player.CurrentItem != null)
                         return ItemToString(player.CurrentItem, true, false);
                     else
                         return "None";
@@ -390,7 +390,8 @@ namespace Mistaken.RAMod
                 "ammo",
                 (player, gameplayData) =>
                 {
-                    return $"<align=left></align>{player.Ammo[(int)AmmoType.Nato556]}x5.56mm<line-height=1px>\n</line-height><align=center>{player.Ammo[(int)AmmoType.Nato762]}x7.62mm</align><line-height=1px>\n</line-height><align=right>{player.Ammo[(int)AmmoType.Nato9]}x9mm</align>";
+                    return "W.I.P";
+                    //return $"<align=left></align>{player.Ammo[(int)AmmoType.Nato556]}x5.56mm<line-height=1px>\n</line-height><align=center>{player.Ammo[(int)AmmoType.Nato762]}x7.62mm</align><line-height=1px>\n</line-height><align=right>{player.Ammo[(int)AmmoType.Nato9]}x9mm</align>";
                 }
             },
             {
@@ -405,6 +406,16 @@ namespace Mistaken.RAMod
                         return $"Max: {data.MaxShield} | Regeneration: {data.Regeneration}";
 
                     return string.Empty;
+                }
+            },
+            {
+                "countryCode",
+                (player, gameplayData) =>
+                {
+                    if (ModdedRAHandler.CountryCodes.TryGetValue(player.UserId, out string countryCode))
+                        return countryCode;
+
+                    return "<color=red>Failed to find country code</color>";
                 }
             },
         };
@@ -466,6 +477,8 @@ namespace Mistaken.RAMod
     Active flag: Studio Staff
 #endif
 
+Country Code: {countryCode}
+
 #list
     #if {mute}|{imute}
         #if {mute}
@@ -524,53 +537,65 @@ namespace Mistaken.RAMod
     #endif
 #endlist
 
-#if !{gameplayDataAccess}
-    Class: <color=#D4AF37>INSUFFICIENT PERMISSIONS</color>
-    #if !{rip}
+#if {ipAccess}
+    #if !{gameplayDataAccess}
+        Class: <color=#D4AF37>INSUFFICIENT PERMISSIONS</color>
+        #if !{rip}
+            #list
+                HP: <color=#D4AF37>INSUFFICIENT PERMISSIONS</color>
+                AHP: <color=#D4AF37>INSUFFICIENT PERMISSIONS</color>
+                Position: <color=#D4AF37>INSUFFICIENT PERMISSIONS</color>
+                Room: <color=#D4AF37>INSUFFICIENT PERMISSIONS</color>
+            #endlist
+        #endif
+        <color=#D4AF37>* GameplayData permission required</color>
+    #else
         #list
-            HP: <color=#D4AF37>INSUFFICIENT PERMISSIONS</color>
-            AHP: <color=#D4AF37>INSUFFICIENT PERMISSIONS</color>
-            Position: <color=#D4AF37>INSUFFICIENT PERMISSIONS</color>
-            Room: <color=#D4AF37>INSUFFICIENT PERMISSIONS</color>
+            Class: <color={classColor}>{class}</color>
+            #if !null-{unit}
+                Unit: {unit}
+            #else
+                <color=#0000>.</color>                             <color=#0000> .</color>
+            #endif
         #endlist
+        #if !{rip}
+            #list
+                HP: {textHP}
+                AHP: {textAHP}
+
+                Position: {position}
+                Room: {room}
+            #endlist
+
+            #if !null-{shield}
+                Shield: {shield}
+            #endif
+
+            #list
+                Items: 
+                Current Item: {coloredCurrentItem}
+            #endlist
+
+            {coloredItems-2columns}
+
+            Ammo: {ammo}
+
+            #if !null-{effects}
+                Effects: 
+                {effects-3columns}
+            #endif
+        #endif
     #endif
-    <color=#D4AF37>* GameplayData permission required</color>
 #else
-    #list
+    #if !{gameplayDataAccess}
+        Class: <color=#D4AF37>INSUFFICIENT PERMISSIONS</color>
+        <color=#D4AF37>* GameplayData permission required</color>
+    #else
         Class: <color={classColor}>{class}</color>
-        #if !null-{unit}
-            Unit: {unit}
-        #else
-            <color=#0000>.</color>                             <color=#0000> .</color>
-        #endif
-    #endlist
-    #if !{rip}
-        #list
-            HP: {textHP}
-            AHP: {textAHP}
-
-            Position: {position}
-            Room: {room}
-        #endlist
-
-        #if !null-{shield}
-            Shield: {shield}
-        #endif
-
-        #list
-            Items: 
-            Current Item: {coloredCurrentItem}
-        #endlist
-
-        {coloredItems-2columns}
-
-        Ammo: {ammo}
-
-        #if !null-{effects}
-            Effects: 
-            {effects-3columns}
-        #endif
     #endif
+
+    #AdminData
+
 #endif
 ";
                     proccessedPattern = string.Join("\n", PreprocessPattern(pattern));
@@ -626,6 +651,9 @@ namespace Mistaken.RAMod
                             i++;
                         continue;
                     }
+
+                    if (lines[i].StartsWith("#"))
+                        continue;
 
                     foreach (var parser in NormalParsers)
                     {
@@ -722,11 +750,6 @@ namespace Mistaken.RAMod
         {
             switch (item)
             {
-                case ItemType.Ammo556:
-                case ItemType.Ammo762:
-                case ItemType.Ammo9mm:
-                    return "#427ef5";
-
                 case ItemType.Adrenaline:
                 case ItemType.Medkit:
                 case ItemType.Painkillers:
@@ -740,20 +763,18 @@ namespace Mistaken.RAMod
 
                 case ItemType.MicroHID:
                 case ItemType.GrenadeFlash:
-                case ItemType.GrenadeFrag:
+                case ItemType.GrenadeHE:
                 case ItemType.GunCOM15:
                 case ItemType.GunE11SR:
                 case ItemType.GunLogicer:
-                case ItemType.GunMP7:
-                case ItemType.GunProject90:
-                case ItemType.GunUSP:
+                case ItemType.GunFSP9:
+                case ItemType.GunCrossvec:
+                case ItemType.GunCOM18:
                     return "#73b0ff";
 
                 case ItemType.Flashlight:
                 case ItemType.Coin:
-                case ItemType.Disarmer:
                 case ItemType.Radio:
-                case ItemType.WeaponManagerTablet:
                     return "#a9bd64";
 
                 case ItemType.KeycardChaosInsurgency:
@@ -774,9 +795,9 @@ namespace Mistaken.RAMod
                     return "#5b5b5b";
                 case ItemType.KeycardScientist:
                     return "#e7d678";
-                case ItemType.KeycardScientistMajor:
+                case ItemType.KeycardResearchCoordinator:
                     return "#ddab20";
-                case ItemType.KeycardSeniorGuard:
+                case ItemType.KeycardNTFOfficer:
                     return "#a2cade";
                 case ItemType.KeycardZoneManager:
                     return "#217778";
@@ -786,12 +807,13 @@ namespace Mistaken.RAMod
             }
         }
 
-        private static Exiled.API.Enums.SightType GetSightType(Inventory.SyncItemInfo item)
+        /*private static Exiled.API.Enums.SightType GetSightType(Item item)
         {
-            switch (item.id)
+            var weapon = item.Base as InventorySystem.Items.Firearms.Firearm;
+            switch (item.Type)
             {
                 case ItemType.GunE11SR:
-                    switch (item.modSight)
+                    switch (weapon.Attachments.Where(x => x.Slot == InventorySystem.Items.Firearms.Attachments.AttachmentSlot.Si)
                     {
                         case 1:
                             return Exiled.API.Enums.SightType.HoloSight;
@@ -960,33 +982,33 @@ namespace Mistaken.RAMod
                 default:
                     return Exiled.API.Enums.OtherType.None;
             }
-        }
+        }*/
 
-        private static string ItemToString(Inventory.SyncItemInfo item, bool colored, bool showMods = true)
+        private static string ItemToString(Item item, bool colored, bool showMods = true)
         {
             if (colored)
             {
-                string color = GetItemColor(item.id);
-                if (item.id.IsWeapon(false))
+                string color = GetItemColor(item.Type);
+                /*if (item.id.IsWeapon(false))
                     return $"<color={color}>{item.id}</color> Ammo: {item.durability}" + (!showMods ? string.Empty : $" Mods: {GetSightType(item)}, {GetBarrelType(item)}, {GetOtherType(item)}");
-                else
+                else*/
                 {
-                    if (item.durability == 0)
-                        return $"<color={color}>{item.id}</color>";
-                    else
-                        return $"<color={color}>{item.id}</color> ({item.durability})";
+                    //if (item.durability == 0)
+                        return $"<color={color}>{item.Type}</color>";
+                    //else
+                    //    return $"<color={color}>{item.id}</color> ({item.durability})";
                 }
             }
             else
             {
-                if (item.id.IsWeapon(false))
+                /*if (item.id.IsWeapon(false))
                     return $"{item.id} Ammo: {item.durability}" + (!showMods ? string.Empty : $"Mods: {GetSightType(item)}, {GetBarrelType(item)}, {GetOtherType(item)}");
-                else
+                else*/
                 {
-                    if (item.durability == 0)
-                        return $"{item.id}";
-                    else
-                        return $"{item.id} ({item.durability})";
+                    //if (item.durability == 0)
+                        return $"{item.Type}";
+                    //else
+                    //    return $"{item.Type} ({item.durability})";
                 }
             }
         }

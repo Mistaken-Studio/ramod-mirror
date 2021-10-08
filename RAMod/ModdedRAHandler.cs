@@ -67,9 +67,9 @@ namespace Mistaken.RAMod
                 yield return Timing.WaitForSeconds(3);
                 foreach (var player in RealPlayers.List.Where(x => x.RemoteAdminAccess))
                 {
-                    if (MenuManager.LastSelectedPlayer.TryGetValue(player, out int selected))
+                    if (MenuManager.LastSelectedPlayer.TryGetValue(player, out var selected))
                     {
-                        var response = MenuManager.Menus[0].HandlePlayerInfoRequest(player, 0, selected);
+                        var response = MenuManager.Menus[0].HandlePlayerInfoRequest(player, selected.Type, selected.Id);
                         player.Sender.RaReply($"REQUEST_DATA:PLAYER#{response}", true, false, "PlayerInfo");
                     }
                 }
