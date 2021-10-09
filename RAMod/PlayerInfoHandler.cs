@@ -20,17 +20,6 @@ namespace Mistaken.RAMod
     {
         static PlayerInfoHandler()
         {
-            /*Handlers.Add((player, builder, gameplayData) =>
-            {
-                if (OldLOFH.Country.TryGetValue(player.UserId, out string countryCode) && countryCode != "PL")
-                    builder.Append("\nCountry Code: " + countryCode);
-            });*/
-
-            /*Handlers.Add((player, builder, gameplayData) =>
-            {
-                if (CommandsExtender.Commands.FakeNickCommand.FullNicknames.ContainsKey(player.UserId) && Systems.Patches.NicknamePatch.RealNicknames.TryGetValue(player.UserId, out string fname))
-                    builder.Append("\nFake Nickname: " + fname);
-            });*/
         }
 
         public static readonly Dictionary<string, Func<Player, bool, bool>> IfParsers = new Dictionary<string, Func<Player, bool, bool>>
@@ -807,215 +796,35 @@ Country Code: {countryCode}
             }
         }
 
-        /*private static Exiled.API.Enums.SightType GetSightType(Item item)
-        {
-            var weapon = item.Base as InventorySystem.Items.Firearms.Firearm;
-            switch (item.Type)
-            {
-                case ItemType.GunE11SR:
-                    switch (weapon.Attachments.Where(x => x.Slot == InventorySystem.Items.Firearms.Attachments.AttachmentSlot.Si)
-                    {
-                        case 1:
-                            return Exiled.API.Enums.SightType.HoloSight;
-                        case 2:
-                            return Exiled.API.Enums.SightType.BlueDotSight;
-                        case 3:
-                            return Exiled.API.Enums.SightType.NightVisionSight;
-                        case 4:
-                            return Exiled.API.Enums.SightType.SniperScope;
-                    }
-
-                    return Exiled.API.Enums.SightType.None;
-                case ItemType.GunProject90:
-                    switch (item.modSight)
-                    {
-                        case 1:
-                            return Exiled.API.Enums.SightType.HoloSight;
-                        case 2:
-                            return Exiled.API.Enums.SightType.RedDot;
-                    }
-
-                    return Exiled.API.Enums.SightType.None;
-                case ItemType.GunMP7:
-                    switch (item.modSight)
-                    {
-                        case 1:
-                            return Exiled.API.Enums.SightType.HoloSight;
-                        case 2:
-                            return Exiled.API.Enums.SightType.RedDot;
-                    }
-
-                    return Exiled.API.Enums.SightType.None;
-                case ItemType.GunUSP:
-                    switch (item.modSight)
-                    {
-                        case 1:
-                            return Exiled.API.Enums.SightType.Collimator;
-                    }
-
-                    return Exiled.API.Enums.SightType.None;
-
-                default:
-                    return Exiled.API.Enums.SightType.None;
-            }
-        }
-
-        private static Exiled.API.Enums.BarrelType GetBarrelType(Inventory.SyncItemInfo item)
-        {
-            switch (item.id)
-            {
-                case ItemType.GunE11SR:
-                    switch (item.modBarrel)
-                    {
-                        case 1:
-                            return Exiled.API.Enums.BarrelType.Silencer;
-                        case 2:
-                            return Exiled.API.Enums.BarrelType.MuzzleBrake;
-                        case 3:
-                            return Exiled.API.Enums.BarrelType.HeavyBarrel;
-                        case 4:
-                            return Exiled.API.Enums.BarrelType.MuzzleBooster;
-                    }
-
-                    return Exiled.API.Enums.BarrelType.None;
-                case ItemType.GunProject90:
-                    switch (item.modBarrel)
-                    {
-                        case 1:
-                            return Exiled.API.Enums.BarrelType.Suppressor;
-                        case 2:
-                            return Exiled.API.Enums.BarrelType.Silencer;
-                        case 3:
-                            return Exiled.API.Enums.BarrelType.HeavyBarrel;
-                    }
-
-                    return Exiled.API.Enums.BarrelType.None;
-                case ItemType.GunMP7:
-                    switch (item.modBarrel)
-                    {
-                        case 1:
-                            return Exiled.API.Enums.BarrelType.Suppressor;
-                    }
-
-                    return Exiled.API.Enums.BarrelType.None;
-                case ItemType.GunUSP:
-                    switch (item.modBarrel)
-                    {
-                        case 1:
-                            return Exiled.API.Enums.BarrelType.Silencer;
-                        case 2:
-                            return Exiled.API.Enums.BarrelType.HeavyBarrel;
-                    }
-
-                    return Exiled.API.Enums.BarrelType.None;
-
-                case ItemType.GunCOM15:
-                    switch (item.modBarrel)
-                    {
-                        case 1:
-                            return Exiled.API.Enums.BarrelType.Suppressor;
-                    }
-
-                    return Exiled.API.Enums.BarrelType.None;
-
-                default:
-                    return Exiled.API.Enums.BarrelType.None;
-            }
-        }
-
-        private static Exiled.API.Enums.OtherType GetOtherType(Inventory.SyncItemInfo item)
-        {
-            switch (item.id)
-            {
-                case ItemType.GunE11SR:
-                    switch (item.modOther)
-                    {
-                        case 1:
-                            return Exiled.API.Enums.OtherType.GyroscopicStabilizer;
-                        case 2:
-                            return Exiled.API.Enums.OtherType.AmmoCounter;
-                        case 3:
-                            return Exiled.API.Enums.OtherType.Laser;
-                        case 4:
-                            return Exiled.API.Enums.OtherType.Flashlight;
-                    }
-
-                    return Exiled.API.Enums.OtherType.None;
-                case ItemType.GunProject90:
-                    switch (item.modOther)
-                    {
-                        case 1:
-                            return Exiled.API.Enums.OtherType.Flashlight;
-                        case 2:
-                            return Exiled.API.Enums.OtherType.Laser;
-                        case 3:
-                            return Exiled.API.Enums.OtherType.AmmoCounter;
-                    }
-
-                    return Exiled.API.Enums.OtherType.None;
-                case ItemType.GunMP7:
-                    switch (item.modOther)
-                    {
-                        case 1:
-                            return Exiled.API.Enums.OtherType.AmmoCounter;
-                    }
-
-                    return Exiled.API.Enums.OtherType.None;
-                case ItemType.GunUSP:
-                    switch (item.modOther)
-                    {
-                        case 1:
-                            return Exiled.API.Enums.OtherType.Flashlight;
-                    }
-
-                    return Exiled.API.Enums.OtherType.None;
-
-                case ItemType.GunCOM15:
-                    switch (item.modOther)
-                    {
-                        case 1:
-                            return Exiled.API.Enums.OtherType.Flashlight;
-                    }
-
-                    return Exiled.API.Enums.OtherType.None;
-
-                default:
-                    return Exiled.API.Enums.OtherType.None;
-            }
-        }*/
-
         private static string ItemToString(Item item, bool colored, bool showMods = true)
         {
             if (colored)
             {
                 string color = GetItemColor(item.Type);
-                /*if (item.id.IsWeapon(false))
-                    return $"<color={color}>{item.id}</color> Ammo: {item.durability}" + (!showMods ? string.Empty : $" Mods: {GetSightType(item)}, {GetBarrelType(item)}, {GetOtherType(item)}");
-                else*/
-                {
-                    //if (item.durability == 0)
-                        return $"<color={color}>{item.Type}</color>";
-                    //else
-                    //    return $"<color={color}>{item.id}</color> ({item.durability})";
-                }
+
+                var weapon = item as Firearm;
+                if (weapon != null)
+                    return $"<color={color}>{weapon.Type}</color> Ammo: {weapon.Ammo}" + (!showMods ? string.Empty : $"Mods: {string.Join(" | ", weapon.Attachments.Where(x => x.IsEnabled).Select(x => $"{x.Name} ({x.Slot})"))}");
+                else
+                    return $"<color={color}>{item.Type}</color>";
             }
             else
             {
-                /*if (item.id.IsWeapon(false))
-                    return $"{item.id} Ammo: {item.durability}" + (!showMods ? string.Empty : $"Mods: {GetSightType(item)}, {GetBarrelType(item)}, {GetOtherType(item)}");
-                else*/
-                {
-                    //if (item.durability == 0)
-                        return $"{item.Type}";
-                    //else
-                    //    return $"{item.Type} ({item.durability})";
-                }
+                var weapon = item as Firearm;
+                if (weapon != null)
+                    return $"{weapon.Type} Ammo: {weapon.Ammo}" + (!showMods ? string.Empty : $"Mods: {string.Join(" | ", weapon.Attachments.Where(x => x.IsEnabled).Select(x => $"{x.Name} ({x.Slot})"))}");
+                else
+                    return $"{item.Type}";
             }
         }
 
         private static string[] PreprocessPattern(string rawPattern)
         {
             List<string> lines = NorthwoodLib.Pools.ListPool<string>.Shared.Rent(rawPattern.Split('\n'));
+
+            Exiled.API.Features.Log.Debug($"Preprocessing started, raw: ", PluginHandler.Instance.Config.VerbouseOutput);
+            for (int i = 0; i < lines.Count; i++)
+                Exiled.API.Features.Log.Debug($"[{i:00}] {lines[i]}", PluginHandler.Instance.Config.VerbouseOutput);
 
             bool hasEndOfPattern = false;
 
@@ -1131,7 +940,7 @@ Country Code: {countryCode}
                 }
             }
 
-            Exiled.API.Features.Log.Debug($"Preprocessing complete, result: ");
+            Exiled.API.Features.Log.Debug($"Preprocessing complete, result: ", PluginHandler.Instance.Config.VerbouseOutput);
             for (int i = 0; i < lines.Count; i++)
                 Exiled.API.Features.Log.Debug($"[{i:00}] {lines[i]}", PluginHandler.Instance.Config.VerbouseOutput);
 
