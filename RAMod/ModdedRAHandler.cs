@@ -4,14 +4,8 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Exiled.API.Enums;
-using Exiled.API.Extensions;
-using Exiled.API.Features;
-using Exiled.API.Interfaces;
 using MEC;
 using Mistaken.API;
 using Mistaken.API.Diagnostics;
@@ -45,12 +39,15 @@ namespace Mistaken.RAMod
 
         public override void OnDisable()
         {
+            Exiled.Events.Handlers.Server.RestartingRound -= this.Handle(() => this.Server_RestartingRound(), "RestartingRound");
+            Exiled.Events.Handlers.Server.WaitingForPlayers -= this.Handle(() => this.Server_WaitingForPlayers(), "WaitingForPlayers");
+            Exiled.Events.Handlers.Player.PreAuthenticating -= this.Handle<Exiled.Events.EventArgs.PreAuthenticatingEventArgs>((ev) => this.Player_PreAuthenticating(ev));
         }
 
         public override void OnEnable()
         {
-            Exiled.Events.Handlers.Server.RestartingRound += Server_RestartingRound;
-            Exiled.Events.Handlers.Server.WaitingForPlayers += Server_WaitingForPlayers;
+            Exiled.Events.Handlers.Server.RestartingRound += this.Handle(() => this.Server_RestartingRound(), "RestartingRound");
+            Exiled.Events.Handlers.Server.WaitingForPlayers += this.Handle(() => this.Server_WaitingForPlayers(), "WaitingForPlayers");
             Exiled.Events.Handlers.Player.PreAuthenticating += this.Handle<Exiled.Events.EventArgs.PreAuthenticatingEventArgs>((ev) => this.Player_PreAuthenticating(ev));
         }
 
@@ -87,25 +84,6 @@ namespace Mistaken.RAMod
                 LOFHPatch.DisabledFor.Add(ev.UserId);
 
             ModdedRAHandler.CountryCodes[ev.UserId] = ev.Country;
-
-            /*this.CallDelayed(1, () =>
-            {
-                if (!OldLOFH.ThreatLevelDatas.ContainsKey(ev.UserId))
-                {
-                    bool wFlag = false;
-                    string reason = "";
-                    if (OldLOFH.WarningFlags.TryGetValue(ev.UserId, out MistakenSocket.Shared.Blacklist.BlacklistEntry flag))
-                    {
-                        wFlag = true;
-                        reason = flag.Reason;
-                    }
-
-                    Systems.ThreatLevel.ThreatLevelManager.GetThreatLevel(ev.UserId, (Systems.ThreatLevel.ThreadLevelData data) =>
-                    {
-                        OldLOFH.ThreatLevelDatas.Add(ev.UserId, data);
-                    }, wFlag, reason, ev.Country);
-                }
-            }, "ThreatLevel");*/
         }
     }
 }

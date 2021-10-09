@@ -155,12 +155,6 @@ namespace Mistaken.RAMod
                                 default:
                                     return true;
                             }
-
-                            /*if (!(upper == "PLAYER_LIST"))
-                            {
-                                if (!(upper == "PLAYER") && !(upper == "SHORT-PLAYER") && MenuSystem.CurrentMenus[senderPlayer.Id] == 0)
-                                    return true;
-                            }*/
                         }
                         else
                             return true;

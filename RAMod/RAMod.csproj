@@ -56,13 +56,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Handler.cs" />
     <Compile Include="MenuManager.cs" />
     <Compile Include="Menus\DefaultMenu.cs" />
     <Compile Include="ModdedRAHandler.cs" />
     <Compile Include="OldLOFH.cs" />
     <Compile Include="LOFHPatch.cs" />
-    <Compile Include="MenuSystem.cs" />
     <Compile Include="ModRACommand.cs" />
     <Compile Include="PlayerInfoHandler.cs" />
     <Compile Include="PluginHandler.cs" />

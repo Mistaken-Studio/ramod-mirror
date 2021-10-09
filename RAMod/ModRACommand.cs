@@ -24,9 +24,9 @@ namespace Mistaken.RAMod
         {
             _s = false;
             if (args.Length == 0)
-                return new string[] { GetUsage() };
+                return new string[] { this.GetUsage() };
             if (!bool.TryParse(args[0], out bool value))
-                return new string[] { GetUsage() };
+                return new string[] { this.GetUsage() };
             if (!value) // false -> Default RA | true -> Modified RA
                 LOFHPatch.DisabledFor.Add(sender.GetPlayer().UserId);
             else
