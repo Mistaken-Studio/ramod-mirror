@@ -387,7 +387,7 @@ namespace Mistaken.RAMod
                 "unit",
                 (player, gameplayData) => player.UnitName
             },
-            {
+            /*{
                 "shield",
                 (player, gameplayData) =>
                 {
@@ -396,7 +396,7 @@ namespace Mistaken.RAMod
 
                     return string.Empty;
                 }
-            },
+            },*/
             {
                 "countryCode",
                 (player, gameplayData) =>
@@ -557,7 +557,7 @@ Country Code: {countryCode}
             #endlist
 
             #if !null-{shield}
-                Shield: {shield}
+            #    Shield: {shield}
             #endif
 
             #list
