@@ -42,7 +42,7 @@ namespace Mistaken.RAMod.Menus
                         if (player == null)
                             continue;
                         string text4 = string.Empty;
-                        string nickname = player.TryGetSessionVariable("REAL_NICKNAME", out string name) ? $"{player.ReferenceHub.nicknameSync.CombinedName}* ({name})" : player.ReferenceHub.nicknameSync.CombinedName;
+                        string nickname = player.TryGetSessionVariable("REAL_NICKNAME", out string name) ? $"{player.ReferenceHub.nicknameSync.CombinedName}<color=#FF5439>**</color> ({name})" : player.ReferenceHub.nicknameSync.CombinedName;
 
                         ServerRoles serverRoles = player.ReferenceHub.serverRoles;
 
