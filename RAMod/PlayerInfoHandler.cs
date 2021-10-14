@@ -98,7 +98,7 @@ namespace Mistaken.RAMod
             },
             {
                 "nickname",
-                (player, gameplayData) => player.ReferenceHub.nicknameSync.CombinedName
+                (player, gameplayData) => player.TryGetSessionVariable("REAL_NICKNAME", out string nickname) ? $"{player.ReferenceHub.nicknameSync.CombinedName}<color=#FF5439>**</color> ({nickname})" : player.ReferenceHub.nicknameSync.CombinedName
             },
             {
                 "playerId",
