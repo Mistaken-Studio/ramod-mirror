@@ -42,6 +42,7 @@ namespace Mistaken.RAMod.Menus
                         if (player == null)
                             continue;
                         string text4 = string.Empty;
+                        string nickname = player.TryGetSessionVariable("REAL_NICKNAME", out string name) ? $"{player.ReferenceHub.nicknameSync.CombinedName}* ({name})" : player.ReferenceHub.nicknameSync.CombinedName;
 
                         ServerRoles serverRoles = player.ReferenceHub.serverRoles;
 
@@ -84,7 +85,7 @@ namespace Mistaken.RAMod.Menus
                         if (ModdedRAHandler.Prefixes.TryGetValue(player.UserId, out var prefix) && prefix.Count != 0)
                             text4 += $"{string.Join(" ", prefix.Select(x => x.Value))} ";
 
-                        text3 += $"{text4}<color={RoleToColor(player)}>({player.Id}) {player.ReferenceHub.nicknameSync.CombinedName.Replace("\n", string.Empty)}</color>\n";
+                        text3 += $"{text4}<color={RoleToColor(player)}>({player.Id}) {nickname.Replace("\n", string.Empty)}</color>\n";
                     }
                     catch (System.Exception ex)
                     {
