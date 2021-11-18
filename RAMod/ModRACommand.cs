@@ -20,9 +20,9 @@ namespace Mistaken.RAMod
 
         public string GetUsage() => "modRA true/false";
 
-        public override string[] Execute(ICommandSender sender, string[] args, out bool _s)
+        public override string[] Execute(ICommandSender sender, string[] args, out bool success)
         {
-            _s = false;
+            success = false;
             if (args.Length == 0)
                 return new string[] { this.GetUsage() };
             if (!bool.TryParse(args[0], out bool value))
@@ -31,7 +31,7 @@ namespace Mistaken.RAMod
                 LOFHPatch.DisabledFor.Add(sender.GetPlayer().UserId);
             else
                 LOFHPatch.DisabledFor.Remove(sender.GetPlayer().UserId);
-            _s = true;
+            success = true;
             return new string[] { "Done" };
         }
     }

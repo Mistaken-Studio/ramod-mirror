@@ -16,12 +16,14 @@ using Mistaken.API.Extensions;
 
 namespace Mistaken.RAMod
 {
+    /// <summary>
+    /// PlayerInfo Handler.
+    /// </summary>
     public static class PlayerInfoHandler
     {
-        static PlayerInfoHandler()
-        {
-        }
-
+        /// <summary>
+        /// Custom if arguments.
+        /// </summary>
         public static readonly Dictionary<string, Func<Player, bool, bool>> IfParsers = new Dictionary<string, Func<Player, bool, bool>>
         {
             {
@@ -90,6 +92,9 @@ namespace Mistaken.RAMod
             },
         };
 
+        /// <summary>
+        /// Custom vars used to display data.
+        /// </summary>
         public static readonly Dictionary<string, Func<Player, bool, string>> NormalParsers = new Dictionary<string, Func<Player, bool, string>>
         {
             {
@@ -380,7 +385,8 @@ namespace Mistaken.RAMod
                 (player, gameplayData) =>
                 {
                     return "W.I.P";
-                    //return $"<align=left></align>{player.Ammo[(int)AmmoType.Nato556]}x5.56mm<line-height=1px>\n</line-height><align=center>{player.Ammo[(int)AmmoType.Nato762]}x7.62mm</align><line-height=1px>\n</line-height><align=right>{player.Ammo[(int)AmmoType.Nato9]}x9mm</align>";
+
+                    // return $"<align=left></align>{player.Ammo[(int)AmmoType.Nato556]}x5.56mm<line-height=1px>\n</line-height><align=center>{player.Ammo[(int)AmmoType.Nato762]}x7.62mm</align><line-height=1px>\n</line-height><align=right>{player.Ammo[(int)AmmoType.Nato9]}x9mm</align>";
                 }
             },
             {
@@ -409,6 +415,9 @@ namespace Mistaken.RAMod
             },
         };
 
+        /// <summary>
+        /// Gets or sets pattern used to display Player Info.
+        /// </summary>
         public static string Pattern
         {
             get

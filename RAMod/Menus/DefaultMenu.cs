@@ -54,7 +54,7 @@ namespace Mistaken.RAMod.Menus
                                 text4 = "<link=RA_StudioStaff><color=white>[<color=#005EBC></color><color=white>]</color></link> ";
                         }
 
-                        if (player.GetSessionVar<bool>(SessionVarType.HIDDEN))
+                        if (player.GetSessionVariable<bool>(SessionVarType.HIDDEN))
                         {
                             if (sender.Group?.KickPower >= player.Group?.KickPower)
                                 text4 += "|HIDDEN| ";
@@ -65,7 +65,7 @@ namespace Mistaken.RAMod.Menus
                         if (player.UserId.IsDevUserId())
                             text4 += "[<color=#FF0000>|</color><b><color=#FFD700><b>DEV</b></color></b><color=#FF0000>|</color>] ";
 
-                        if (player.GetSessionVar<bool>(SessionVarType.VANISH))
+                        if (player.GetSessionVariable<bool>(SessionVarType.VANISH))
                             text4 += $"[<V{VanishHandler.Vanished[player.Id]}>] ";
 
                         if (serverRoles.RemoteAdmin)
@@ -79,7 +79,7 @@ namespace Mistaken.RAMod.Menus
                         else if (player.IsIntercomMuted)
                             text4 += "[<color=red><color=#FFC0CB>I</color>MUTED</color>]";
 
-                        if (player.GetSessionVar<bool>("WARNING"))
+                        if (player.GetSessionVariable<bool>("WARNING"))
                             text4 += $"[<color=yellow>!</color>]<color=orange>WARNING</color>[<color=red>!</color>] ";
 
                         if (ModdedRAHandler.Prefixes.TryGetValue(player.UserId, out var prefix) && prefix.Count != 0)
@@ -102,12 +102,12 @@ namespace Mistaken.RAMod.Menus
 
         public static string RoleToColor(Player player)
         {
-            var data = Server.Host.GetSessionVar<Dictionary<string, string>>("RAMod.CustomColors");
+            var data = Server.Host.GetSessionVariable<Dictionary<string, string>>("RAMod.CustomColors");
             if (data != null)
             {
                 foreach (var item in data)
                 {
-                    if (player.GetSessionVar<bool>(item.Key))
+                    if (player.GetSessionVariable<bool>(item.Key))
                         return item.Value;
                 }
             }

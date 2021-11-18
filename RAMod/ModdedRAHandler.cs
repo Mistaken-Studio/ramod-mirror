@@ -13,12 +13,27 @@ using Mistaken.API.Extensions;
 
 namespace Mistaken.RAMod
 {
+    /// <summary>
+    /// Modded RA Handler.
+    /// </summary>
     public class ModdedRAHandler : Module
     {
+        /// <summary>
+        /// Dictionary containing country codes.
+        /// </summary>
         public static readonly Dictionary<string, string> CountryCodes = new Dictionary<string, string>();
-        public static readonly Dictionary<string, Dictionary<string, string>> Prefixes = new Dictionary<string, Dictionary<string, string>>();
-        public static readonly Dictionary<string, Dictionary<string, string>> Flags = new Dictionary<string, Dictionary<string, string>>();
 
+        /// <summary>
+        /// Dictionary containing player prefixes (On RA's player list).
+        /// </summary>
+        public static readonly Dictionary<string, Dictionary<string, string>> Prefixes = new Dictionary<string, Dictionary<string, string>>();
+
+        /// <summary>
+        /// Sets prefix.
+        /// </summary>
+        /// <param name="userId">Target's userId.</param>
+        /// <param name="key">Prefix name.</param>
+        /// <param name="value">Prefix value.</param>
         public static void SetPrefix(string userId, string key, string value)
         {
             if (!Prefixes.ContainsKey(userId))
@@ -30,25 +45,28 @@ namespace Mistaken.RAMod
                 Prefixes[userId][key] = value;
         }
 
-        public ModdedRAHandler(PluginHandler plugin)
-            : base(plugin)
-        {
-        }
-
+        /// <inheritdoc/>
         public override string Name => nameof(ModdedRAHandler);
 
+        /// <inheritdoc/>
         public override void OnDisable()
         {
-            Exiled.Events.Handlers.Server.RestartingRound -= this.Handle(() => this.Server_RestartingRound(), "RestartingRound");
-            Exiled.Events.Handlers.Server.WaitingForPlayers -= this.Handle(() => this.Server_WaitingForPlayers(), "WaitingForPlayers");
-            Exiled.Events.Handlers.Player.PreAuthenticating -= this.Handle<Exiled.Events.EventArgs.PreAuthenticatingEventArgs>((ev) => this.Player_PreAuthenticating(ev));
+            Exiled.Events.Handlers.Server.RestartingRound -= this.Server_RestartingRound;
+            Exiled.Events.Handlers.Server.WaitingForPlayers -= this.Server_WaitingForPlayers;
+            Exiled.Events.Handlers.Player.PreAuthenticating -= this.Player_PreAuthenticating;
         }
 
+        /// <inheritdoc/>
         public override void OnEnable()
         {
-            Exiled.Events.Handlers.Server.RestartingRound += this.Handle(() => this.Server_RestartingRound(), "RestartingRound");
-            Exiled.Events.Handlers.Server.WaitingForPlayers += this.Handle(() => this.Server_WaitingForPlayers(), "WaitingForPlayers");
-            Exiled.Events.Handlers.Player.PreAuthenticating += this.Handle<Exiled.Events.EventArgs.PreAuthenticatingEventArgs>((ev) => this.Player_PreAuthenticating(ev));
+            Exiled.Events.Handlers.Server.RestartingRound += this.Server_RestartingRound;
+            Exiled.Events.Handlers.Server.WaitingForPlayers += this.Server_WaitingForPlayers;
+            Exiled.Events.Handlers.Player.PreAuthenticating += this.Player_PreAuthenticating;
+        }
+
+        internal ModdedRAHandler(PluginHandler plugin)
+            : base(plugin)
+        {
         }
 
         private void Server_WaitingForPlayers()
