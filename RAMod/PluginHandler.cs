@@ -27,7 +27,7 @@ namespace Mistaken.RAMod
         public override PluginPriority Priority => PluginPriority.Medium + 1;
 
         /// <inheritdoc/>
-        public override Version RequiredExiledVersion => new Version(3, 0, 3);
+        public override Version RequiredExiledVersion => new Version(4, 1, 2);
 
         /// <inheritdoc/>
         public override void OnEnabled()
