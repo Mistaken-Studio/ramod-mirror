@@ -732,7 +732,7 @@ Country Code: {countryCode}
         }
 
         private static string pattern = null;
-        private static string proccessedPattern = "<size=150%><color=red>FAILED TO LOAD PATTERN</color></size>";
+        private static string proccessedPattern = string.Join("\n", PreprocessPattern(pattern));
 
         private static string EffectToString(KeyValuePair<Type, CustomPlayerEffects.PlayerEffect> effect)
         {
