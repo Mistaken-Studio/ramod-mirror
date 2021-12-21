@@ -415,6 +415,11 @@ namespace Mistaken.RAMod
             },
         };
 
+        static PlayerInfoHandler()
+        {
+            proccessedPattern = string.Join("\n", PreprocessPattern(Pattern));
+        }
+
         /// <summary>
         /// Gets or sets pattern used to display Player Info.
         /// </summary>
@@ -732,7 +737,7 @@ Country Code: {countryCode}
         }
 
         private static string pattern = null;
-        private static string proccessedPattern = string.Join("\n", PreprocessPattern(pattern));
+        private static string proccessedPattern = "CRITICAL ERROR";
 
         private static string EffectToString(KeyValuePair<Type, CustomPlayerEffects.PlayerEffect> effect)
         {
