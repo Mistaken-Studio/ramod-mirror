@@ -812,6 +812,9 @@ Country Code: {countryCode}
 
         private static string ItemToString(Item item, bool colored, bool showMods = true)
         {
+            // It's too long :/
+            showMods = false;
+
             if (colored)
             {
                 string color = GetItemColor(item.Type);
