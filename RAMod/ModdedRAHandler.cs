@@ -79,13 +79,13 @@ namespace Mistaken.RAMod
             int rid = RoundPlus.RoundId;
             while (rid == RoundPlus.RoundId)
             {
-                yield return Timing.WaitForSeconds(3);
+                yield return Timing.WaitForSeconds(2);
                 foreach (var player in RealPlayers.List.Where(x => x.RemoteAdminAccess))
                 {
                     if (MenuManager.LastSelectedPlayer.TryGetValue(player, out var selected))
                     {
                         var response = MenuManager.Menus[0].HandlePlayerInfoRequest(player, selected.Type, selected.Id);
-                        player.Sender.RaReply($"REQUEST_DATA:PLAYER#{response}", true, false, "PlayerInfo");
+                        player.Sender.RaReply($"${1} {response}", true, false, string.Empty);
                     }
                 }
             }
