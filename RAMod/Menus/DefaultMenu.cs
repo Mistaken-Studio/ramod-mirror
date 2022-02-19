@@ -4,15 +4,12 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Exiled.API.Features;
 using Mistaken.API;
 using Mistaken.API.Extensions;
-using RemoteAdmin;
+using RemoteAdmin.Communication;
 
 namespace Mistaken.RAMod.Menus
 {
@@ -199,13 +196,14 @@ namespace Mistaken.RAMod.Menus
 
             bool gameplayData = sender.CheckPermissions(PlayerPermissions.GameplayData);
             bool userIdAccess = sender.CheckPermissions((PlayerPermissions)18007046UL);
+            bool ipAccess = type == 0;
 
             sender.ReferenceHub.queryProcessor.GameplayData = gameplayData;
 
             if (sender.ReferenceHub.serverRoles.Staff || sender.ReferenceHub.serverRoles.RaEverywhere)
                 userIdAccess = true;
 
-            if (type == 1)
+            if (ipAccess)
             {
                 ServerLogs.AddLog(
                     ServerLogs.Modules.DataAccess,
@@ -214,10 +212,16 @@ namespace Mistaken.RAMod.Menus
                     false);
             }
 
-            var playerInfo = PlayerInfoHandler.GetPattern(target, gameplayData, userIdAccess, type == 1);
-            return playerInfo;
+            RaClipboard.Send(sender.Sender, RaClipboard.RaClipBoardType.PlayerId, target.Id.ToString());
 
-            // MEC.Timing.CallDelayed(1, () => LOFHPatch.Prefix(q, sender));
+            if (userIdAccess)
+                RaClipboard.Send(sender.Sender, RaClipboard.RaClipBoardType.UserId, target.UserId);
+
+            if (ipAccess)
+                RaClipboard.Send(sender.Sender, RaClipboard.RaClipBoardType.Ip, target.IPAddress);
+
+            var playerInfo = PlayerInfoHandler.GetPattern(target, gameplayData, userIdAccess, ipAccess, type == 1);
+            return playerInfo;
         }
     }
 }
