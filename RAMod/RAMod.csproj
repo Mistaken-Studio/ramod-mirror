@@ -24,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x64</PlatformTarget>
     <DocumentationFile>bin\Debug\Mistaken.RAMod.xml</DocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -60,7 +61,6 @@
     <Compile Include="MenuManager.cs" />
     <Compile Include="Menus\DefaultMenu.cs" />
     <Compile Include="ModdedRAHandler.cs" />
-    <Compile Include="OldLOFH.cs" />
     <Compile Include="LOFHPatch.cs" />
     <Compile Include="ModRACommand.cs" />
     <Compile Include="PlayerCommandSender_RaReply.cs" />
@@ -68,6 +68,8 @@
     <Compile Include="PluginHandler.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RaPlayerList_ReceiveData.cs" />
+    <Compile Include="RaPlayer_ReceiveData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
