@@ -8,8 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Exiled.API.Enums;
-using Exiled.API.Extensions;
 using Exiled.API.Features;
 using Exiled.API.Features.Items;
 using Mistaken.API.Extensions;
@@ -90,6 +88,10 @@ namespace Mistaken.RAMod
                 "rip",
                 (player, gameplayData) => player.IsDead
             },
+            {
+                "streamerMode",
+                (player, gameplayData) => player.TryGetSessionVariable<bool>(API.SessionVarType.STREAMER_MODE, out var value) && value
+            },
         };
 
         /// <summary>
@@ -159,11 +161,11 @@ namespace Mistaken.RAMod
             },
             {
                 "textHP",
-                (player, gameplayData) => $"{player.Health}/{player.MaxHealth} ({(player.MaxHealth == 0 ? "Infinity" : ((player.Health / player.MaxHealth) * 100).ToString())}%)"
+                (player, gameplayData) => $"{player.Health}/{player.MaxHealth} ({(player.MaxHealth == 0 ? "Infinity" : (player.Health / player.MaxHealth * 100).ToString())}%)"
             },
             {
                 "textAHP",
-                (player, gameplayData) => $"{player.ArtificialHealth}/{player.MaxArtificialHealth} ({(player.MaxArtificialHealth == 0 ? "Infinity" : ((player.ArtificialHealth / player.MaxArtificialHealth) * 100).ToString())}%)"
+                (player, gameplayData) => $"{player.ArtificialHealth}/{player.MaxArtificialHealth} ({(player.MaxArtificialHealth == 0 ? "Infinity" : (player.ArtificialHealth / player.MaxArtificialHealth * 100).ToString())}%)"
             },
             {
                 "position",
@@ -283,7 +285,7 @@ namespace Mistaken.RAMod
                 (player, gameplayData) =>
                 {
                     if (player.CurrentItem != null)
-                        return ItemToString(player.CurrentItem, false, false);
+                        return ItemToString(player.CurrentItem, false);
                     else
                         return "None";
                 }
@@ -334,7 +336,7 @@ namespace Mistaken.RAMod
                 (player, gameplayData) =>
                 {
                     if (player.CurrentItem != null)
-                        return ItemToString(player.CurrentItem, true, false);
+                        return ItemToString(player.CurrentItem, true);
                     else
                         return "None";
                 }
@@ -431,56 +433,76 @@ namespace Mistaken.RAMod
                 {
                     pattern = @"
 #list
-    Player ID: {playerId}
+    Player ID: {playerId} <color=green><link=CP_ID></link></color>
     Nickname: {nickname}                             <color=#0000> .</color>
 
-    #if {userIdAccess}
-        User ID: {userId}
-    #else
-        User ID: <color=#D4AF37>INSUFFICIENT PERMISSIONS</color>
-    #endif
+    #if !{gameplayInfo}
+        #if {userIdAccess}
+            #if {streamerMode}
+                User ID: <color=purple>Hidden By Streamer Mode</color> <color=green><link=CP_USERID></link></color>
+            #else            
+                User ID: {userId} <color=green><link=CP_USERID></link></color>
+            #endif
+        #else
+            User ID: <color=#D4AF37>INSUFFICIENT PERMISSIONS</color>
+        #endif
 
-    #if {ipAccess}
-        IP: {ip}                             <color=#0000> .</color>
-    #else
-        IP: [REDACTED]                             <color=#0000> .</color>
+        #if {ipAccess}
+            #if {streamerMode}
+                IP: <color=purple>Hidden By Streamer Mode</color> <color=green><link=CP_IP></link></color>                             <color=#0000> .</color>
+            #else            
+                IP: {ip} <color=green><link=CP_IP></link></color>                             <color=#0000> .</color>
+            #endif
+        #else
+            IP: <color=#D4AF37>INSUFFICIENT PERMISSIONS</color>                             <color=#0000> .</color>
+        #endif
     #endif
 #endlist
 
-#if {userIdAccess}&!null-{userId2}
-    User ID 2: {userId2}
+#if !{gameplayInfo}
+    #if {userIdAccess}&!null-{userId2}
+        User ID 2: {userId2}
+    #endif
 #endif
-#if !null-{role}|!null-{group}
-    #list
-        #if !null-{role}
-            Server role: {role}
+#if !{gameplayInfo}
+    #if !null-{role}|!null-{group}
+        #list
+            #if !null-{role}
+                Server role: {role}
+            #endif
+
+            #if !null-{group}
+                Group: {group}                             <color=#0000> .</color>
+            #else
+                <color=#0000>.</color>
+            #endif
+        #endlist
+    #endif
+#endif
+
+#if !{gameplayInfo}
+    #if !{streamerMode}
+        #if {hasLocalHiddenRole}&{viewLocalHiddenRoles}
+            <color=#DC143C>Hidden role: </color>{hiddenRole} (LOCAL)
         #endif
 
-        #if !null-{group}
-            Group: {group}                             <color=#0000> .</color>
-        #else
-            <color=#0000>.</color>
+        #if {hasGlobalHiddenRole}&{viewGlobalHiddenRoles}
+            <color=#DC143C>Hidden role: </color>{hiddenRole} (GLOBAL)
         #endif
-    #endlist
-#endif
 
-#if {hasLocalHiddenRole}&{viewLocalHiddenRoles}
-    <color=#DC143C>Hidden role: </color>{hiddenRole} (LOCAL)
-#endif
+        #if {isNWGlobalStaff}&{viewGlobalHiddenRoles}|{viewLocalHiddenRoles}
+            Active flag: <color=#BCC6CC>Studio GLOBAL Staff (management or global moderation)</color>
+        #endif
 
-#if {hasGlobalHiddenRole}&{viewGlobalHiddenRoles}
-    <color=#DC143C>Hidden role: </color>{hiddenRole} (GLOBAL)
-#endif
+        #if !{isNWGlobalStaff}&{isNWStaff}&{viewGlobalHiddenRoles}|{viewLocalHiddenRoles}
+            Active flag: Studio Staff
+        #endif
+    #else
+        Some information may be <color=purple>Hidden By Streamer Mode</color>
+    #endif
 
-#if {isNWGlobalStaff}&{viewGlobalHiddenRoles}|{viewLocalHiddenRoles}
-    Active flag: <color=#BCC6CC>Studio GLOBAL Staff (management or global moderation)</color>
+    Country Code: {countryCode}
 #endif
-
-#if !{isNWGlobalStaff}&{isNWStaff}&{viewGlobalHiddenRoles}|{viewLocalHiddenRoles}
-    Active flag: Studio Staff
-#endif
-
-Country Code: {countryCode}
 
 #list
     #if {mute}|{imute}
@@ -540,7 +562,7 @@ Country Code: {countryCode}
     #endif
 #endlist
 
-#if {ipAccess}
+#if {gameplayInfo}
     #if !{gameplayDataAccess}
         Class: <color=#D4AF37>INSUFFICIENT PERMISSIONS</color>
         #if !{rip}
@@ -614,7 +636,7 @@ Country Code: {countryCode}
             }
         }
 
-        internal static string GetPattern(Player target, bool gameplayData, bool userId, bool ip)
+        internal static string GetPattern(Player target, bool gameplayData, bool userId, bool ip, bool gameplayInfo = false)
         {
             StringBuilder builder = NorthwoodLib.Pools.StringBuilderPool.Shared.Rent();
 
@@ -622,6 +644,7 @@ Country Code: {countryCode}
             {
                 { "{userIdAccess}", userId },
                 { "{ipAccess}", ip },
+                { "{gameplayInfo}", gameplayInfo },
             };
             Dictionary<string, string> normalCache = new Dictionary<string, string>();
 
@@ -810,10 +833,10 @@ Country Code: {countryCode}
             }
         }
 
-        private static string ItemToString(Item item, bool colored, bool showMods = true)
+        private static string ItemToString(Item item, bool colored)
         {
-            // It's too long :/
-            showMods = false;
+            if (item is null)
+                return "Item is null";
 
             if (colored)
             {
@@ -821,7 +844,7 @@ Country Code: {countryCode}
 
                 var weapon = item as Firearm;
                 if (weapon != null)
-                    return $"<color={color}>{weapon.Type}</color> Ammo: {weapon.Ammo}" + (!showMods ? string.Empty : $"Mods: {string.Join(" | ", weapon.Attachments.Where(x => x.IsEnabled).Select(x => $"{x.Name} ({x.Slot})"))}");
+                    return $"<color={color}>{weapon.Type}</color> Ammo: {weapon.Ammo}";
                 else
                     return $"<color={color}>{item.Type}</color>";
             }
@@ -829,7 +852,7 @@ Country Code: {countryCode}
             {
                 var weapon = item as Firearm;
                 if (weapon != null)
-                    return $"{weapon.Type} Ammo: {weapon.Ammo}" + (!showMods ? string.Empty : $"Mods: {string.Join(" | ", weapon.Attachments.Where(x => x.IsEnabled).Select(x => $"{x.Name} ({x.Slot})"))}");
+                    return $"{weapon.Type} Ammo: {weapon.Ammo}";
                 else
                     return $"{item.Type}";
             }

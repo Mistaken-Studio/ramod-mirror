@@ -63,6 +63,7 @@
     <Compile Include="OldLOFH.cs" />
     <Compile Include="LOFHPatch.cs" />
     <Compile Include="ModRACommand.cs" />
+    <Compile Include="PlayerCommandSender_RaReply.cs" />
     <Compile Include="PlayerInfoHandler.cs" />
     <Compile Include="PluginHandler.cs" />
     <Compile Include="Config.cs" />

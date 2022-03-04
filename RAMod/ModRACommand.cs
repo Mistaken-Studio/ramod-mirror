@@ -18,19 +18,44 @@ namespace Mistaken.RAMod
 
         public override string Command => "modRA";
 
-        public string GetUsage() => "modRA true/false";
+        public override string[] Aliases => new string[] { "raMod" };
+
+        public string GetUsage() => "modRA enable/disable/stream";
 
         public override string[] Execute(ICommandSender sender, string[] args, out bool success)
         {
             success = false;
             if (args.Length == 0)
                 return new string[] { this.GetUsage() };
-            if (!bool.TryParse(args[0], out bool value))
-                return new string[] { this.GetUsage() };
+            bool value;
+            var player = sender.GetPlayer();
+            switch (args[0].ToLower())
+            {
+                case "true":
+                case "enable":
+                    value = false;
+                    break;
+
+                case "false":
+                case "disable":
+                    value = true;
+                    break;
+
+                case "stream":
+                case "smode":
+                case "stream-mode":
+                    success = true;
+                    player.SetSessionVariable(API.SessionVarType.STREAMER_MODE, !player.GetSessionVariable<bool>(API.SessionVarType.STREAMER_MODE));
+                    return new string[] { "Streamer mode " + (player.GetSessionVariable<bool>(API.SessionVarType.STREAMER_MODE) ? "<color=green>Enabled</color>" : "<color=red>Disabled</color>") };
+
+                default:
+                    return new string[] { "Inavlid argument", this.GetUsage() };
+            }
+
             if (!value) // false -> Default RA | true -> Modified RA
-                LOFHPatch.DisabledFor.Add(sender.GetPlayer().UserId);
+                LOFHPatch.DisabledFor.Add(player.UserId);
             else
-                LOFHPatch.DisabledFor.Remove(sender.GetPlayer().UserId);
+                LOFHPatch.DisabledFor.Remove(player.UserId);
             success = true;
             return new string[] { "Done" };
         }
