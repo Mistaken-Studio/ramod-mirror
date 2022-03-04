@@ -88,6 +88,10 @@ namespace Mistaken.RAMod
                 "rip",
                 (player, gameplayData) => player.IsDead
             },
+            {
+                "streamerMode",
+                (player, gameplayData) => player.TryGetSessionVariable<bool>(API.SessionVarType.STREAMER_MODE, out var value) && value
+            },
         };
 
         /// <summary>
@@ -434,15 +438,23 @@ namespace Mistaken.RAMod
 
     #if !{gameplayInfo}
         #if {userIdAccess}
-            User ID: {userId} <color=green><link=CP_USERID></link></color>
+            #if {streamerMode}
+                User ID: <color=purple>Hidden By Streamer Mode</color> <color=green><link=CP_USERID></link></color>
+            #else            
+                User ID: {userId} <color=green><link=CP_USERID></link></color>
+            #endif
         #else
             User ID: <color=#D4AF37>INSUFFICIENT PERMISSIONS</color>
         #endif
 
         #if {ipAccess}
-            IP: {ip} <color=green><link=CP_IP></link></color>                             <color=#0000> .</color>
+            #if {streamerMode}
+                IP: <color=purple>Hidden By Streamer Mode</color> <color=green><link=CP_IP></link></color>                             <color=#0000> .</color>
+            #else            
+                IP: {ip} <color=green><link=CP_IP></link></color>                             <color=#0000> .</color>
+            #endif
         #else
-            IP: [REDACTED]                             <color=#0000> .</color>
+            IP: <color=#D4AF37>INSUFFICIENT PERMISSIONS</color>                             <color=#0000> .</color>
         #endif
     #endif
 #endlist
@@ -469,20 +481,24 @@ namespace Mistaken.RAMod
 #endif
 
 #if !{gameplayInfo}
-    #if {hasLocalHiddenRole}&{viewLocalHiddenRoles}
-        <color=#DC143C>Hidden role: </color>{hiddenRole} (LOCAL)
-    #endif
+    #if !{streamerMode}
+        #if {hasLocalHiddenRole}&{viewLocalHiddenRoles}
+            <color=#DC143C>Hidden role: </color>{hiddenRole} (LOCAL)
+        #endif
 
-    #if {hasGlobalHiddenRole}&{viewGlobalHiddenRoles}
-        <color=#DC143C>Hidden role: </color>{hiddenRole} (GLOBAL)
-    #endif
+        #if {hasGlobalHiddenRole}&{viewGlobalHiddenRoles}
+            <color=#DC143C>Hidden role: </color>{hiddenRole} (GLOBAL)
+        #endif
 
-    #if {isNWGlobalStaff}&{viewGlobalHiddenRoles}|{viewLocalHiddenRoles}
-        Active flag: <color=#BCC6CC>Studio GLOBAL Staff (management or global moderation)</color>
-    #endif
+        #if {isNWGlobalStaff}&{viewGlobalHiddenRoles}|{viewLocalHiddenRoles}
+            Active flag: <color=#BCC6CC>Studio GLOBAL Staff (management or global moderation)</color>
+        #endif
 
-    #if !{isNWGlobalStaff}&{isNWStaff}&{viewGlobalHiddenRoles}|{viewLocalHiddenRoles}
-        Active flag: Studio Staff
+        #if !{isNWGlobalStaff}&{isNWStaff}&{viewGlobalHiddenRoles}|{viewLocalHiddenRoles}
+            Active flag: Studio Staff
+        #endif
+    #else
+        Some information may be <color=purple>Hidden By Streamer Mode</color>
     #endif
 
     Country Code: {countryCode}
