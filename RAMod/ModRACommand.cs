@@ -33,12 +33,12 @@ namespace Mistaken.RAMod
             {
                 case "true":
                 case "enable":
-                    value = false;
+                    value = true;
                     break;
 
                 case "false":
                 case "disable":
-                    value = true;
+                    value = false;
                     break;
 
                 case "stream":
