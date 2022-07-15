@@ -109,7 +109,7 @@ namespace Mistaken.RAMod.Menus
                 }
             }
 
-            return RoleToColor(player.Role, player.IsOverwatchEnabled);
+            return RoleToColor(player.Role.Type, player.IsOverwatchEnabled);
         }
 
         public static string RoleToColor(RoleType role, bool ovrm)
